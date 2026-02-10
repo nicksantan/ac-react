@@ -1,4 +1,3 @@
-import React from "react";
 import styled, { keyframes } from "styled-components";
 import img1 from "./assets/img1.jpeg";
 import img2 from "./assets/img2.jpeg";
@@ -12,6 +11,7 @@ const Container = styled.div`
   height: 300px;
   height: auto; /* Adjust
   margin-bottom: 300px;
+  margin-top: 50px;
  
    
 `;

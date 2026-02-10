@@ -1,72 +1,85 @@
-import React from "react";
-import Navbar from "./Navbar";
 import Banner from "./Banner";
 import styled from "styled-components";
 import LogoImg from "./assets/resized-logo-and-text.png";
+import { useContent } from "./hooks/useContent";
+import { useImagePreload } from "./hooks/useImagePreload";
+import { EditableText, EditableImage } from "./components/editable";
+import { CONTENT_MAX_WIDTH } from "./styles/constants";
 
-const Logo = styled.img`
+const LogoWrapper = styled.div`
   margin: auto;
   display: block;
-  width: 500px;
+  max-width: 600px;
   margin-top: 10px;
+  text-align: center;
 `;
 
 const MissionStatement = styled.h1`
   text-align: center;
-  width: 900px;
-  margin: auto;
+  max-width: ${CONTENT_MAX_WIDTH};
   margin: 10px auto;
+  padding: 0 20px;
+  font-size: 36px;
+  text-transform: none;
+
+  @media (max-width: 768px) {
+    font-size: 26px;
+  }
 `;
+
 const MissionDescription = styled.h2`
   text-align: center;
-  width: 900px;
-  margin: auto;
+  max-width: ${CONTENT_MAX_WIDTH};
   margin: 30px auto;
+  padding: 0 20px;
   font-weight: 400;
+
+  @media (max-width: 768px) {
+    font-size: 18px;
+  }
 `;
 
-const Sunset = styled.div`
-  height: 22px;
-  width: 100%;
+const ContentArea = styled.div`
+  min-height: 400px;
 `;
-const SunsetOne = styled(Sunset)`
-  background-color: #f05b2f;
-`;
-const SunsetTwo = styled(Sunset)`
-  background-color: #fdcb7e;
-`;
-const SunsetThree = styled(Sunset)`
-  background-color: #fff4ae;
-`;
-const SunsetFour = styled(Sunset)`
-  background-color: #9bc854;
-`;
-
-const Photos = styled.section``;
 
 const Home = () => {
-  return (
-    <>
-      <Navbar />
-      <SunsetTwo />
-      <SunsetThree />
-      <SunsetFour />
-      <Logo src={LogoImg} />
+  const { content, loading } = useContent();
 
-      <MissionStatement>
-        Arcade Commons is a collective of artists, developers, designers, and
-        fabricators that make independent arcade cabinets and other physical
-        game installations
-      </MissionStatement>
-      <MissionDescription>
-        Our mission is to help creators with the resources they need to create
-        installation art and arcade games. We educate, counsel, and support
-        creators on how to fabricate arcade cabinets and develop fun, accessible
-        games for everyone. Learn how you can play games we've helped make or
-        get involved!
-      </MissionDescription>
-      <Banner />
-    </>
+  // Use local image as fallback if no Firebase URL
+  const logoSrc = content.home?.logoUrl?.startsWith('http')
+    ? content.home.logoUrl
+    : LogoImg;
+
+  const imageLoaded = useImagePreload(logoSrc);
+  const isReady = !loading && imageLoaded;
+
+  return (
+    <ContentArea className={`content-fade ${isReady ? 'loaded' : ''}`}>
+        <LogoWrapper>
+          <EditableImage
+            src={logoSrc}
+            alt="Arcade Commons Logo"
+            contentPath="content/home/logoUrl"
+            className=""
+            style={{ width: '100%' }}
+          />
+        </LogoWrapper>
+
+        <EditableText
+          value={content.home.missionHeading}
+          contentPath="content/home/missionHeading"
+          as={MissionStatement}
+        />
+        <EditableText
+          value={content.home.missionDescription}
+          contentPath="content/home/missionDescription"
+          as={MissionDescription}
+          multiline
+          markdown
+        />
+        <Banner />
+    </ContentArea>
   );
 };
 
