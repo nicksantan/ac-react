@@ -4,7 +4,10 @@
       "Bash(dir /s \"c:\\\\Projects\\\\ac-react\\\\src\")",
       "Bash(npm run build:*)",
       "Bash(timeout 8 npm run dev:*)",
-      "Bash(npm install:*)"
+      "Bash(npm install:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npx vite:*)",
+      "Bash(find . -name \"*.js\" -exec grep -l \"JSX\\\\|<[A-Z]\\\\|</\\\\|React.Fragment\\\\|<>\" {})"
     ]
   }
 }

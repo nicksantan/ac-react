@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import { useAuth } from '../hooks/useAuth';
 
@@ -70,8 +70,9 @@ const AdminLink = styled(Link)`
 
 export default function AdminIndicator() {
   const { isAdmin, logout, user, editModeEnabled, toggleEditMode } = useAuth();
+  const { pathname } = useLocation();
 
-  if (!isAdmin || !user) {
+  if (!isAdmin || !user || pathname === '/timeline') {
     return null;
   }
 

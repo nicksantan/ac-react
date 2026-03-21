@@ -7,6 +7,7 @@ import AdminLogin from "./components/AdminLogin.tsx";
 import AdminLogPage from "./AdminLogPage.tsx";
 import AdminGamesPage from "./AdminGamesPage.tsx";
 import AdminIndicator from "./components/AdminIndicator.tsx";
+import TimelinePage from "./timeline/TimelinePage.jsx";
 import Layout from "./Layout.tsx";
 import "./App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
@@ -22,6 +23,7 @@ function App() {
       <ContentProvider>
         <Router basename={basename}>
           <Routes>
+            <Route path="/timeline" element={<TimelinePage />} />
             <Route element={<Layout />}>
               <Route path="/" element={<Home />} />
               <Route path="/About" element={<AboutPage />} />
