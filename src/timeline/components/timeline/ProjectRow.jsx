@@ -18,7 +18,7 @@ const Row = styled.div`
 `;
 
 function ProjectRow({ project, range, pxPerDay }) {
-  const { projects, setProjects, openModal } = useTimeline();
+  const { projects, setProjects, openModal, updateProject } = useTimeline();
   const { isAdmin } = useAuth();
 
   const phases = useMemo(() => computePhases(project), [project]);
@@ -89,6 +89,13 @@ function ProjectRow({ project, range, pxPerDay }) {
       document.body.style.cursor = '';
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('mouseup', handleMouseUp);
+
+      // Persist dragged state to Firebase
+      setProjects(prev => {
+        const updated = prev.find(p => p.id === project.id);
+        if (updated) updateProject(updated);
+        return prev;
+      });
     };
 
     if (type === 'move') {
@@ -97,7 +104,7 @@ function ProjectRow({ project, range, pxPerDay }) {
 
     window.addEventListener('mousemove', handleMouseMove);
     window.addEventListener('mouseup', handleMouseUp);
-  }, [isAdmin, pxPerDay, project.id, projects, setProjects]);
+  }, [isAdmin, pxPerDay, project.id, projects, setProjects, updateProject]);
 
   // Build label items for external placement
   const { labelItems, phaseElements, milestoneElements } = useMemo(() => {
