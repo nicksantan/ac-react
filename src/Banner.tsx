@@ -6,13 +6,14 @@ import { CONTENT_MAX_WIDTH } from "./styles/constants";
 
 const MAX_BANNER_IMAGES = 24;
 const BANNER_MAX_IMAGE_BYTES = 1024 * 1024;
+const BANNER_SECONDS_PER_IMAGE = 4;
 
 const Container = styled.div`
   overflow: hidden;
   width: 100%;
   height: auto;
   margin-top: 50px;
-  margin-bottom: 300px;
+  margin-bottom: 50px;
 `;
 const scroll = keyframes`
     0% {
@@ -22,7 +23,7 @@ const scroll = keyframes`
       transform: translateX(-50%);
     }
   `;
-const BannerImages = styled.div`
+const BannerImages = styled.div<{ $durationSeconds: number }>`
   border: 1px dashed rgba(255, 255, 255, 0.4);
   background: -moz-radial-gradient(
       0% 2%,
@@ -102,7 +103,11 @@ const BannerImages = styled.div`
   display: flex;
   align-items: center;
   width: max-content;
-  animation: ${scroll} 20s linear infinite;
+  animation: ${scroll} ${({ $durationSeconds }) => $durationSeconds}s linear infinite;
+
+  &:hover {
+    animation-play-state: paused;
+  }
   img {
     padding: 20px;
     box-sizing: border-box;
@@ -268,7 +273,7 @@ const Banner = () => {
 
   return (
     <Container>
-      <BannerImages>
+      <BannerImages $durationSeconds={populatedImages.length * BANNER_SECONDS_PER_IMAGE}>
         {repeatedImages.map((image, index) => (
           <img
             src={image.url}
