@@ -8,6 +8,7 @@ import {
   ImageEditWrapper,
   ImageEditOverlay,
   EditButton,
+  EmptyImagePlaceholder,
   ModalOverlay,
   ModalContent,
   ModalTitle,
@@ -24,7 +25,10 @@ interface EditableImageProps {
   contentPath: string;
   className?: string;
   style?: React.CSSProperties;
+  maxSizeBytes?: number;
 }
+
+const DEFAULT_MAX_SIZE_BYTES = 5 * 1024 * 1024;
 
 // Preview container that mirrors the actual image styling
 const PreviewContainer = styled.div<{ $style?: React.CSSProperties }>`
@@ -56,7 +60,8 @@ export default function EditableImage({
   alt,
   contentPath,
   className,
-  style
+  style,
+  maxSizeBytes = DEFAULT_MAX_SIZE_BYTES
 }: EditableImageProps) {
   const { isAdmin, editModeEnabled } = useAuth();
   const canEdit = isAdmin && editModeEnabled;
@@ -79,9 +84,11 @@ export default function EditableImage({
       return;
     }
 
-    // Validate file size (max 5MB)
-    if (file.size > 5 * 1024 * 1024) {
-      setError('Image must be less than 5MB');
+    // Validate file size
+    if (file.size > maxSizeBytes) {
+      const maxMB = maxSizeBytes / (1024 * 1024);
+      const maxDisplay = maxMB >= 1 ? `${maxMB}MB` : `${Math.round(maxSizeBytes / 1024)}KB`;
+      setError(`Image must be less than ${maxDisplay}`);
       return;
     }
 
@@ -157,14 +164,26 @@ export default function EditableImage({
     return <img src={src} alt={alt} className={className} style={style} />;
   }
 
+  const hasImage = !!src;
+
   return (
     <>
-      <ImageEditWrapper $isAdmin={canEdit}>
-        <img src={src} alt={alt} className={className} style={style} />
-        <ImageEditOverlay onClick={() => setIsModalOpen(true)}>
-          <EditButton>Change Image</EditButton>
-        </ImageEditOverlay>
-      </ImageEditWrapper>
+      {hasImage ? (
+        <ImageEditWrapper $isAdmin={canEdit}>
+          <img src={src} alt={alt} className={className} style={style} />
+          <ImageEditOverlay onClick={() => setIsModalOpen(true)}>
+            <EditButton>Change Image</EditButton>
+          </ImageEditOverlay>
+        </ImageEditWrapper>
+      ) : (
+        <EmptyImagePlaceholder
+          onClick={() => setIsModalOpen(true)}
+          className={className}
+          style={style}
+        >
+          <EditButton as="span">+ Add Image</EditButton>
+        </EmptyImagePlaceholder>
+      )}
 
       {isModalOpen && (
         <ModalOverlay onClick={handleCancel}>

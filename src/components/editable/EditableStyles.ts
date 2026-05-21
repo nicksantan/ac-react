@@ -84,6 +84,26 @@ export const ImageEditWrapper = styled.div<{ $isAdmin: boolean }>`
     `}
 `;
 
+export const EmptyImagePlaceholder = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  min-height: 80px;
+  background: rgba(0, 0, 0, 0.04);
+  border: 2px dashed rgba(0, 0, 0, 0.2);
+  border-radius: 6px;
+  cursor: pointer;
+  box-sizing: border-box;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: rgba(240, 91, 47, 0.06);
+    border-color: #f05b2f;
+  }
+`;
+
 export const EditButton = styled.button`
   background-color: #f05b2f;
   color: white;

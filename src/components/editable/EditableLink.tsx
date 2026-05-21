@@ -15,12 +15,15 @@ interface EditableLinkProps {
 
 const LinkWrapper = styled.span`
   position: relative;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
+  display: inline-block;
 `;
 
 const EditIcon = styled.button<{ $visible: boolean }>`
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  margin-left: 6px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -32,6 +35,7 @@ const EditIcon = styled.button<{ $visible: boolean }>`
   border-radius: 4px;
   cursor: pointer;
   opacity: ${({ $visible }) => ($visible ? 1 : 0)};
+  pointer-events: ${({ $visible }) => ($visible ? 'auto' : 'none')};
   transition: opacity 0.2s ease;
   flex-shrink: 0;
 
