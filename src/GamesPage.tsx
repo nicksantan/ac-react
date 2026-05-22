@@ -26,6 +26,11 @@ const GamesGrid = styled.div`
   gap: 30px;
   justify-content: center;
   margin-bottom: 20px;
+
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
 `;
 
 const SectionHeader = styled.h2`

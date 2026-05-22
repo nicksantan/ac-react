@@ -25,6 +25,10 @@ const Container = styled.div<{ $animationDelay?: number }>`
   h1 {
     font-size: 36px;
   }
+
+  @media (max-width: 768px) {
+    width: 100%;
+  }
 `;
 
 const StyledLink = styled(Link)`
@@ -52,11 +56,17 @@ const ProjectInfo = styled.div`
 
 const ProjectName = styled.span`
   font-weight: bold;
+    @media (max-width: 768px) {
+    font-size: 0.8em;
+  }
 `;
 
 const ProjectYear = styled.span`
   opacity: 0.7;
   font-size: 0.9em;
+  @media (max-width: 768px) {
+    font-size: 0.6em;
+  }
 `;
 
 const CabThumbnail = styled.img`

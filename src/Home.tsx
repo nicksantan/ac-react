@@ -23,7 +23,7 @@ const MissionStatement = styled.h1`
   text-transform: none;
 
   @media (max-width: 768px) {
-    font-size: 26px;
+    font-size: 20px;
   }
 `;
 
