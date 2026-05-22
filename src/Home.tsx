@@ -9,7 +9,7 @@ import { CONTENT_MAX_WIDTH } from "./styles/constants";
 const LogoWrapper = styled.div`
   margin: auto;
   display: block;
-  max-width: 600px;
+  max-width: 550px;
   margin-top: 10px;
   text-align: center;
 `;
@@ -19,7 +19,7 @@ const MissionStatement = styled.h1`
   max-width: ${CONTENT_MAX_WIDTH};
   margin: 10px auto;
   padding: 0 20px;
-  font-size: 36px;
+  font-size: 32px;
   text-transform: none;
 
   @media (max-width: 768px) {
@@ -33,6 +33,7 @@ const MissionDescription = styled.h2`
   margin: 30px auto;
   padding: 0 20px;
   font-weight: 400;
+  font-size:23px;
 
   @media (max-width: 768px) {
     font-size: 18px;
