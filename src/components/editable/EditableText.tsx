@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, KeyboardEvent, ElementType, ChangeEvent } from 'react';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import ReactMarkdown from 'react-markdown';
 import { useAuth } from '../../hooks/useAuth';
@@ -130,16 +131,21 @@ export default function EditableText({
         <MarkdownWrapper>
           <ReactMarkdown
             components={{
-              // Render links with target="_blank" for external links
-              a: ({ href, children }) => (
-                <a
-                  href={href}
-                  target={href?.startsWith('http') ? '_blank' : undefined}
-                  rel={href?.startsWith('http') ? 'noopener noreferrer' : undefined}
-                >
-                  {children}
-                </a>
-              )
+              // Use React Router Link for internal routes, regular <a> for external
+              a: ({ href, children }) => {
+                if (href?.startsWith('/')) {
+                  return <Link to={href}>{children}</Link>;
+                }
+                return (
+                  <a
+                    href={href}
+                    target={href?.startsWith('http') ? '_blank' : undefined}
+                    rel={href?.startsWith('http') ? 'noopener noreferrer' : undefined}
+                  >
+                    {children}
+                  </a>
+                );
+              }
             }}
           >
             {text}

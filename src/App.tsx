@@ -26,9 +26,9 @@ function App() {
             <Route path="/timeline" element={<TimelinePage />} />
             <Route element={<Layout />}>
               <Route path="/" element={<Home />} />
-              <Route path="/About" element={<AboutPage />} />
-              <Route path="/Involved" element={<GetInvolvedPage />} />
-              <Route path="/Games" element={<GamesPage />} />
+              <Route path="/about" element={<AboutPage />} />
+              <Route path="/involved" element={<GetInvolvedPage />} />
+              <Route path="/games" element={<GamesPage />} />
               <Route path="/games/:slug" element={<GameDetailPage />} />
               <Route path="/installations/:slug" element={<GameDetailPage />} />
               <Route path="/admin" element={<AdminLogin />} />

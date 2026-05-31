@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams, Link, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import { TfiLink, TfiDownload } from 'react-icons/tfi';
@@ -65,6 +65,16 @@ const MainImageWrapper = styled.div`
   overflow: hidden;
   border-radius: 8px;
   background-color: #ddd;
+`;
+
+const ClickableMainImageWrapper = styled(MainImageWrapper)`
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+
+  &:hover {
+    transform: scale(1.01);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
 `;
 
 const GalleryGrid = styled.div`
@@ -352,6 +362,53 @@ const LightboxCloseButton = styled.button`
   }
 `;
 
+const LightboxNavButton = styled.button`
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  cursor: pointer;
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: white;
+  }
+
+  &:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+`;
+
+const LightboxPrevButton = styled(LightboxNavButton)`
+  left: 20px;
+`;
+
+const LightboxNextButton = styled(LightboxNavButton)`
+  right: 20px;
+`;
+
+const LightboxCounter = styled.div`
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  color: white;
+  font-size: 16px;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 8px 16px;
+  border-radius: 20px;
+`;
+
 const ClickableGalleryWrapper = styled(GalleryImageWrapper)`
   cursor: pointer;
   transition: transform 0.2s, box-shadow 0.2s;
@@ -368,7 +425,7 @@ export default function GameDetailPage() {
   const { games, loading, updateContent } = useContent();
   const { isAdmin, editModeEnabled } = useAuth();
   const canEdit = isAdmin && editModeEnabled;
-  const [lightboxImage, setLightboxImage] = useState<string | null>(null);
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   // Determine if this is an installation based on URL path
   const isInstallationRoute = location.pathname.startsWith('/installations/');
@@ -393,10 +450,50 @@ export default function GameDetailPage() {
   const gameKey = result?.key || '';
   const isArcade = !!(arcadeResult || fallbackArcade);
 
+  // Get gallery images (dynamic, up to 16) - must be before hooks
+  const galleryImages = displayGame?.galleryImages || [];
+  const mainImageUrl = displayGame?.mainImageUrl || displayGame?.imageUrl || '';
+  const allLightboxImages = [mainImageUrl, ...galleryImages].filter(Boolean) as string[];
+
+  const handleLightboxPrev = useCallback(() => {
+    setLightboxIndex((prev) => (prev !== null && prev > 0 ? prev - 1 : prev));
+  }, []);
+
+  const handleLightboxNext = useCallback(() => {
+    setLightboxIndex((prev) =>
+      (prev !== null && prev < allLightboxImages.length - 1 ? prev + 1 : prev)
+    );
+  }, [allLightboxImages.length]);
+
+  const handleLightboxClose = useCallback(() => {
+    setLightboxIndex(null);
+  }, []);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (lightboxIndex === null) return;
+
+      switch (e.key) {
+        case 'Escape':
+          handleLightboxClose();
+          break;
+        case 'ArrowLeft':
+          handleLightboxPrev();
+          break;
+        case 'ArrowRight':
+          handleLightboxNext();
+          break;
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [lightboxIndex, handleLightboxClose, handleLightboxPrev, handleLightboxNext]);
+
   if (!loading && !displayGame) {
     return (
       <ContentWrapper>
-        <BackLink to="/Games">Back to Games</BackLink>
+        <BackLink to="/games">Back to Games</BackLink>
         <NotFoundMessage>Game not found</NotFoundMessage>
       </ContentWrapper>
     );
@@ -405,7 +502,7 @@ export default function GameDetailPage() {
   if (!displayGame) {
     return (
       <ContentWrapper className="content-fade">
-        <BackLink to="/Games">Back to Games</BackLink>
+        <BackLink to="/games">Back to Games</BackLink>
       </ContentWrapper>
     );
   }
@@ -416,8 +513,6 @@ export default function GameDetailPage() {
 
   const aboutSectionTitle = isArcade ? 'About the Game' : 'About the Work';
 
-  // Get gallery images (dynamic, up to 16)
-  const galleryImages = displayGame.galleryImages || [];
   const links = displayGame.links || [];
   const canAddMoreImages = canEdit && galleryImages.length < 16;
 
@@ -463,18 +558,28 @@ export default function GameDetailPage() {
 
   return (
     <ContentWrapper className={`content-fade ${!loading && displayGame ? 'loaded' : ''}`}>
-      <BackLink to="/Games">Back to Games</BackLink>
+      <BackLink to="/games">Back to Games</BackLink>
 
       <GameCard>
         <LeftColumn>
-          <MainImageWrapper>
-            <EditableImage
-              src={displayGame.mainImageUrl || displayGame.imageUrl}
-              alt={displayGame.name}
-              contentPath={`${contentBasePath}/mainImageUrl`}
-              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-            />
-          </MainImageWrapper>
+          {canEdit ? (
+            <MainImageWrapper>
+              <EditableImage
+                src={displayGame.mainImageUrl || displayGame.imageUrl}
+                alt={displayGame.name}
+                contentPath={`${contentBasePath}/mainImageUrl`}
+                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+              />
+            </MainImageWrapper>
+          ) : (
+            <ClickableMainImageWrapper onClick={() => setLightboxIndex(0)}>
+              <img
+                src={mainImageUrl}
+                alt={displayGame.name}
+                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+              />
+            </ClickableMainImageWrapper>
+          )}
 
           <GalleryGrid>
             {galleryImages.map((imgUrl, index) => (
@@ -489,7 +594,7 @@ export default function GameDetailPage() {
                     />
                   </GalleryImageWrapper>
                 ) : (
-                  <ClickableGalleryWrapper onClick={() => setLightboxImage(imgUrl)}>
+                  <ClickableGalleryWrapper onClick={() => setLightboxIndex(index + 1)}>
                     <img
                       src={imgUrl || ''}
                       alt={`${displayGame.name} gallery ${index + 1}`}
@@ -645,16 +750,31 @@ export default function GameDetailPage() {
         </RightColumn>
       </GameCard>
 
-      {lightboxImage && (
-        <LightboxOverlay onClick={() => setLightboxImage(null)}>
-          <LightboxCloseButton onClick={() => setLightboxImage(null)}>
+      {lightboxIndex !== null && allLightboxImages[lightboxIndex] && (
+        <LightboxOverlay onClick={handleLightboxClose}>
+          <LightboxCounter>
+            {lightboxIndex + 1} / {allLightboxImages.length}
+          </LightboxCounter>
+          <LightboxCloseButton onClick={handleLightboxClose}>
             ×
           </LightboxCloseButton>
+          <LightboxPrevButton
+            onClick={(e) => { e.stopPropagation(); handleLightboxPrev(); }}
+            disabled={lightboxIndex === 0}
+          >
+            ‹
+          </LightboxPrevButton>
           <LightboxImage
-            src={lightboxImage}
-            alt="Gallery image"
+            src={allLightboxImages[lightboxIndex]}
+            alt={`Gallery image ${lightboxIndex + 1}`}
             onClick={(e) => e.stopPropagation()}
           />
+          <LightboxNextButton
+            onClick={(e) => { e.stopPropagation(); handleLightboxNext(); }}
+            disabled={lightboxIndex === allLightboxImages.length - 1}
+          >
+            ›
+          </LightboxNextButton>
         </LightboxOverlay>
       )}
     </ContentWrapper>

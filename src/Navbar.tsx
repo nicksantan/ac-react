@@ -137,9 +137,9 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   const menuItems = [
-    { label: 'About', path: '/About' },
-    { label: 'Get Involved', path: '/Involved' },
-    { label: 'Games', path: '/Games' },
+    { label: 'About', path: '/about' },
+    { label: 'Get Involved', path: '/involved' },
+    { label: 'Games', path: '/games' },
   ];
 
   const handleMenuClick = (path: string) => {
@@ -166,9 +166,9 @@ const Navbar = () => {
           <MobileLogo src={SmallLogo} alt="Arcade Commons" />
         </Link>
         <LinkContainer>
-          <Link to="/About">About</Link>
-          <Link to="/Involved">Get Involved</Link>
-          <Link to="/Games">Games</Link>
+          <Link to="/about">About</Link>
+          <Link to="/involved">Get Involved</Link>
+          <Link to="/games">Games</Link>
         </LinkContainer>
         <HamburgerIcon onClick={() => setIsOpen(!isOpen)}>
           <TfiMenu />

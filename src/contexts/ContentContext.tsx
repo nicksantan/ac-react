@@ -61,10 +61,10 @@ const defaultContent: ContentData = {
   },
   navbar: {
     links: [
-      { id: 'about', label: 'About', href: '/About' },
-      { id: 'involved', label: 'Get Involved', href: '/Involved' },
-      { id: 'games', label: 'Games', href: '/Games' },
-      { id: 'history', label: 'History', href: '/History' }
+      { id: 'about', label: 'About', href: '/about' },
+      { id: 'involved', label: 'Get Involved', href: '/involved' },
+      { id: 'games', label: 'Games', href: '/games' },
+      { id: 'history', label: 'History', href: '/history' }
     ]
   },
   about: {

@@ -35,7 +35,8 @@ h1 {
 a {
   color: white;
   font-weight: bold;
-  text-decoration: none;
+  text-decoration: underline dotted;
+  text-underline-offset: 3px;
   transition: opacity 0.2s ease;
 }
 
