@@ -63,7 +63,7 @@ const BlueskyIcon = () => (
 const Footer = () => {
   return (
     <Container>
-      <IconLink href="mailto:contact@arcadecommons.com" title="Email">
+      <IconLink href="mailto:contact@arcadecommons.org" title="Email">
         <EmailIcon />
       </IconLink>
       <IconLink href="https://discord.gg/M32eyPRmGF" target="_blank" rel="noopener noreferrer" title="Discord">
